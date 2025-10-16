@@ -12,12 +12,12 @@
 
 pub mod eal;
 pub mod error;
-pub mod mempool;
 pub mod mbuf;
+pub mod mempool;
 
 pub use error::{Error, Result};
 
 // Re-export commonly used types
 pub use eal::Eal;
-pub use mempool::Mempool;
 pub use mbuf::Mbuf;
+pub use mempool::Mempool;

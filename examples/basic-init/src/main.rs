@@ -6,7 +6,7 @@
 //! - Allocate and manipulate packet buffers (mbufs)
 //! - Query system information
 
-use dpdk::{Eal, Mempool, Mbuf};
+use dpdk::{Eal, Mbuf, Mempool};
 use std::env;
 
 fn main() {
@@ -14,20 +14,22 @@ fn main() {
 
     // Get program arguments for EAL
     let args: Vec<String> = env::args().collect();
-    
+
     // If no arguments provided, use defaults
     let eal_args = if args.len() > 1 {
         args
     } else {
         vec![
             "basic-init".to_string(),
-            "-c".to_string(), "0x1".to_string(),  // Use core 0
-            "-n".to_string(), "4".to_string(),     // 4 memory channels
+            "-c".to_string(),
+            "0x1".to_string(), // Use core 0
+            "-n".to_string(),
+            "4".to_string(), // 4 memory channels
         ]
     };
 
     println!("Initializing EAL with args: {:?}", eal_args);
-    
+
     // Initialize DPDK EAL
     let eal = match Eal::init(eal_args) {
         Ok(eal) => {
@@ -38,7 +40,9 @@ fn main() {
             eprintln!("✗ Failed to initialize EAL: {}", e);
             eprintln!("\nNote: This example requires DPDK to be installed.");
             eprintln!("Install DPDK with: sudo apt-get install dpdk dpdk-dev (Ubuntu/Debian)");
-            eprintln!("Or build from source: https://doc.dpdk.org/guides/linux_gsg/build_dpdk.html");
+            eprintln!(
+                "Or build from source: https://doc.dpdk.org/guides/linux_gsg/build_dpdk.html"
+            );
             std::process::exit(1);
         }
     };
@@ -53,10 +57,10 @@ fn main() {
     println!("\n=== Creating Memory Pool ===");
     let mempool = match Mempool::create(
         "packet_pool",
-        8192,    // Number of elements
-        2048,    // Element size (enough for standard packets)
-        256,     // Cache size
-        -1,      // Socket ID (-1 = any socket)
+        8192, // Number of elements
+        2048, // Element size (enough for standard packets)
+        256,  // Cache size
+        -1,   // Socket ID (-1 = any socket)
     ) {
         Ok(pool) => {
             println!("✓ Memory pool 'packet_pool' created successfully");
@@ -74,12 +78,16 @@ fn main() {
     // Allocate some mbufs
     println!("\n=== Allocating Packet Buffers ===");
     let mut mbufs = Vec::new();
-    
+
     for i in 0..5 {
         match Mbuf::alloc(&mempool) {
             Ok(mbuf) => {
-                println!("✓ Allocated mbuf #{}: data_len={}, pkt_len={}", 
-                         i + 1, mbuf.data_len(), mbuf.pkt_len());
+                println!(
+                    "✓ Allocated mbuf #{}: data_len={}, pkt_len={}",
+                    i + 1,
+                    mbuf.data_len(),
+                    mbuf.pkt_len()
+                );
                 mbufs.push(mbuf);
             }
             Err(e) => {
@@ -89,12 +97,15 @@ fn main() {
         }
     }
 
-    println!("\nObjects in use after allocation: {}", mempool.in_use_count());
+    println!(
+        "\nObjects in use after allocation: {}",
+        mempool.in_use_count()
+    );
 
     // Demonstrate mbuf operations
     if let Some(mut mbuf) = mbufs.first_mut() {
         println!("\n=== Mbuf Operations ===");
-        
+
         // Append data
         match mbuf.append(64) {
             Ok(data) => {
@@ -118,8 +129,11 @@ fn main() {
     // Cleanup happens automatically when variables go out of scope
     println!("\n=== Cleanup ===");
     drop(mbufs);
-    println!("Objects in use after freeing mbufs: {}", mempool.in_use_count());
-    
+    println!(
+        "Objects in use after freeing mbufs: {}",
+        mempool.in_use_count()
+    );
+
     println!("\n✓ Example completed successfully");
     println!("  EAL and mempool will be cleaned up automatically");
 }

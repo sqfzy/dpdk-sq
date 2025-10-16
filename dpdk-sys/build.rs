@@ -20,14 +20,14 @@ fn main() {
             // Fallback: assume DPDK is installed in standard locations
             println!("cargo:warning=DPDK not found via pkg-config, using fallback");
             println!("cargo:warning=Make sure DPDK is installed (pkg-config --modversion libdpdk)");
-            
+
             // Try common installation paths
             let common_paths = vec![
                 "/usr/local/include/dpdk",
                 "/usr/include/dpdk",
                 "/opt/dpdk/include",
             ];
-            
+
             for path in &common_paths {
                 println!("cargo:include={}", path);
             }

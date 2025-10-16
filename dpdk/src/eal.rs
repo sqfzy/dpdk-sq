@@ -46,10 +46,7 @@ impl Eal {
         let c_args = c_args?;
 
         // Create array of pointers
-        let mut arg_ptrs: Vec<*mut i8> = c_args
-            .iter()
-            .map(|s| s.as_ptr() as *mut i8)
-            .collect();
+        let mut arg_ptrs: Vec<*mut i8> = c_args.iter().map(|s| s.as_ptr() as *mut i8).collect();
 
         let argc = arg_ptrs.len() as i32;
 

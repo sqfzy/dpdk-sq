@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, copilot/** ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    name: Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Install DPDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpdk dpdk-dev pkg-config libclang-dev
+      - name: Run clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: [stable, beta, nightly]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - name: Install DPDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpdk dpdk-dev pkg-config libclang-dev
+      - name: Build
+        run: cargo build --verbose
+      - name: Build examples
+        run: cargo build --examples --verbose
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install DPDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpdk dpdk-dev pkg-config libclang-dev
+      - name: Run tests
+        run: cargo test --verbose
+
+  doc:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install DPDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpdk dpdk-dev pkg-config libclang-dev
+      - name: Generate documentation
+        run: cargo doc --no-deps --all-features
