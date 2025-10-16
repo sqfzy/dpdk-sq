@@ -1,0 +1,15 @@
+[package]
+name = "dpdk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Safe and idiomatic Rust bindings to DPDK (Data Plane Development Kit)"
+
+[dependencies]
+dpdk-sys = { path = "../dpdk-sys" }
+libc.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
