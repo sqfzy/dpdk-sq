@@ -1,0 +1,16 @@
+[package]
+name = "dpdk-sys"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Low-level FFI bindings to DPDK (Data Plane Development Kit)"
+links = "dpdk"
+
+[dependencies]
+libc.workspace = true
+
+[build-dependencies]
+bindgen = "0.69"
+pkg-config = "0.3"
