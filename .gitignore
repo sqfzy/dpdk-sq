@@ -1,8 +1,11 @@
 # Rust
 target/
-Cargo.lock
 **/*.rs.bk
 *.pdb
+
+# Cargo.lock should be committed for binaries/examples but not libraries
+# Uncomment the next line if this becomes a library-only project
+# Cargo.lock
 
 # IDE
 .vscode/
